@@ -21,6 +21,7 @@ func main() {
 
 	client := desc.NewNoteV1Client(conn)
 
+	fmt.Println("\n CreateNote")
 	res, err := client.CreateNote(context.Background(), &desc.CreateNoteRequest{
 		Title:  "First Request GRPC!",
 		Author: "Konstantin",
@@ -29,7 +30,34 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-
 	fmt.Println("Result:", res.String())
+
+	fmt.Println("\n DeleteNote")
+	delres, err := client.DeleteNote(context.Background(), &desc.DeleteNoteRequest{Id: 1})
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("Result:", delres.String())
+
+	fmt.Println("\n GetListNote")
+	lists, err := client.GetListNote(context.Background(), &desc.Empty{})
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("Result:", lists.String())
+
+	fmt.Println("\n GetNote")
+	get_note, err := client.GetNote(context.Background(), &desc.GetNoteRequest{Id: 1})
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("Result:", get_note.String())
+
+	fmt.Println("\n UpdateNote")
+	updNote, err := client.UpdateNote(context.Background(), &desc.Note{Id: 1, Author: "Max", Text: "Hello world", Title: "Add"})
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println("Result:", updNote.String())
 
 }

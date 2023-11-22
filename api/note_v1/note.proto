@@ -7,11 +7,13 @@ option go_package = "github.com/plusik10/note-service-api/pkg/note_v1";
 
 service NoteV1 {
   rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponse);
-  // rpc GetNote (GetNoteRequest) returns (GetNoteResponse);
-  // rpc UpdateNote (UpdateNoteRequest) returns (UpdateNoteResponse);
-  // rpc DeleteNote (DeleteNoteRequest) returns (DeleteNoteResponse);
+  rpc GetNote (GetNoteRequest) returns (GetNoteResponse);
+  rpc GetListNote (Empty) returns (GetListNoteResponse);
+  rpc UpdateNote (Note) returns (Empty);
+  rpc DeleteNote (DeleteNoteRequest) returns (Empty);
 }
 
+// Create
 message CreateNoteRequest{
   string title = 1;
   string text = 2;
@@ -22,3 +24,38 @@ message CreateNoteResponse{
   int64 id = 1;
 }
 
+// Get
+message GetNoteRequest{
+  int64 id = 1;
+}
+
+message GetNoteResponse{
+  string title = 1;
+  string text = 2;
+  string author =3;
+}
+
+// GetList
+message Empty{
+}
+
+message Note{
+    int64 id = 1;
+    string title = 2;
+    string text = 3;
+    string author = 4;
+}
+
+message GetListNoteResponse{
+  repeated Note notes = 1;
+}
+
+
+// delete
+message DeleteNoteRequest{
+  int64 id = 1;
+}
+
+message Response{
+  string message = 2;
+}

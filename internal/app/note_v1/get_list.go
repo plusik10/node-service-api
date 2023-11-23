@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	desc "github.com/plusik10/note-service-api/pkg/note_v1"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) GetListNote(ctx context.Context, empty *desc.Empty) (*desc.GetListNoteResponse, error) {
+func (n *Note) GetList(ctx context.Context, empty *emptypb.Empty) (*desc.GetListResponse, error) {
 
 	fmt.Println("Success! GetListNote")
 	notes := []*desc.Note{
@@ -27,6 +28,6 @@ func (n *Note) GetListNote(ctx context.Context, empty *desc.Empty) (*desc.GetLis
 		},
 	}
 
-	return &desc.GetListNoteResponse{Notes: notes}, nil
+	return &desc.GetListResponse{Notes: notes}, nil
 
 }

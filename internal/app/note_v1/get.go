@@ -6,9 +6,9 @@ import (
 	desc "github.com/plusik10/note-service-api/pkg/note_v1"
 )
 
-func (n *Note) GetNote(ctx context.Context, request *desc.GetNoteRequest) (*desc.GetNoteResponse, error) {
+func (n *Note) Get(ctx context.Context, request *desc.GetRequest) (*desc.GetResponse, error) {
 	fmt.Println("Success! GetNote")
-	return &desc.GetNoteResponse{
+	return &desc.GetResponse{
 		Author: "Konstantin",
 		Title:  "GRPC",
 		Text:   "Как тебе такой грпс илон маск?",

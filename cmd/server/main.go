@@ -20,7 +20,7 @@ func main() {
 	s := grpc.NewServer()
 	desc.RegisterNoteV1Server(s, note_v1.NewNote())
 
-	fmt.Println("Server is running")
+	fmt.Printf("Server is running port: %s", port)
 	if err = s.Serve(list); err != nil {
 		log.Fatalf("failed to serve: %s", err.Error())
 	}

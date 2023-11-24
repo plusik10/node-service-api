@@ -33,13 +33,11 @@ func (n *Note) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Creat
 	}
 	defer db.Close()
 
-	builder := squirrel.Insert(noteTable).
+	query, arg, err := squirrel.Insert(noteTable).
 		PlaceholderFormat(squirrel.Dollar).
 		Columns("author,title,text").
 		Values(req.GetAuthor(), req.GetTitle(), req.GetText()).
-		Suffix("returning id")
-
-	query, arg, err := builder.ToSql()
+		Suffix("returning id").ToSql()
 	if err != nil {
 		return nil, err
 	}

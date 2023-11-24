@@ -3,16 +3,61 @@ package note_v1
 import (
 	"context"
 	"fmt"
+	"log"
+
+	"github.com/Masterminds/squirrel"
+	_ "github.com/Masterminds/squirrel"
+	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 	desc "github.com/plusik10/note-service-api/pkg/note_v1"
 )
 
-func (n *Note) Create(ctx context.Context, cr *desc.CreateRequest) (*desc.CreateResponse, error) {
-	fmt.Println("Success!")
-	fmt.Printf("title: %s", cr.GetTitle())
-	fmt.Printf("Author: %s", cr.GetAuthor())
-	fmt.Printf("text: %s", cr.GetText())
+const (
+	noteTable  = "note"
+	host       = "localhost"
+	port       = "54321"
+	dbUser     = "postgres"
+	dbPassword = "qwerty"
+	dbName     = "note-service"
+	sslMode    = "disable"
+)
 
+func (n *Note) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+
+	dbDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		host, port, dbUser, dbPassword, dbName, sslMode)
+
+	db, err := sqlx.Open("pgx", dbDsn)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	builder := squirrel.Insert(noteTable).
+		PlaceholderFormat(squirrel.Dollar).
+		Columns("author,title,text").
+		Values(req.GetAuthor(), req.GetTitle(), req.GetText()).
+		Suffix("returning id")
+
+	query, arg, err := builder.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	row, err := db.QueryContext(ctx, query, arg...)
+	if err != nil {
+		return nil, err
+	}
+
+	var id int64
+	row.Next()
+	err = row.Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("add new note id: %d\n", id)
 	return &desc.CreateResponse{
-		Id: 1,
+		Id: id,
 	}, nil
 }

@@ -53,6 +53,7 @@ func (n *Note) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Creat
 	if err != nil {
 		return nil, err
 	}
+	defer row.Close()
 
 	log.Printf("add new note id: %d\n", id)
 	return &desc.CreateResponse{

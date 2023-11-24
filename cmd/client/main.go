@@ -19,10 +19,10 @@ func main() {
 
 	defer conn.Close()
 
-	Note := desc.NewNoteV1Client(conn)
+	note := desc.NewNoteV1Client(conn)
 
 	fmt.Println("\n CreateNote")
-	res, err := Note.Create(context.Background(), &desc.CreateRequest{
+	res, err := note.Create(context.Background(), &desc.CreateRequest{
 		Title:  "First Request GRPC!",
 		Author: "Konstantin",
 		Text:   "Дорогой дневник, мне не подобрать слов что бы описать боль и унижение которые я испытал сегодня...",
@@ -33,28 +33,28 @@ func main() {
 	fmt.Println("Result:", res.String())
 
 	fmt.Println("\n DeleteNote")
-	delres, err := Note.Delete(context.Background(), &desc.DeleteRequest{Id: 1})
+	delres, err := note.Delete(context.Background(), &desc.DeleteRequest{Id: 1})
 	if err != nil {
 		log.Println(err)
 	}
 	fmt.Println("Result:", delres.String())
 
 	fmt.Println("\n GetListNote")
-	lists, err := Note.GetList(context.Background(), &emptypb.Empty{})
+	lists, err := note.GetList(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		log.Println(err)
 	}
 	fmt.Println("Result:", lists.String())
 
 	fmt.Println("\n GetNote")
-	get_note, err := Note.Get(context.Background(), &desc.GetRequest{Id: 1})
+	get_note, err := note.Get(context.Background(), &desc.GetRequest{Id: 1})
 	if err != nil {
 		log.Println(err)
 	}
 	fmt.Println("Result:", get_note.String())
 
 	fmt.Println("\n UpdateNote")
-	updNote, err := Note.Update(context.Background(),
+	updNote, err := note.Update(context.Background(),
 		&desc.UpdateRequest{Note: &desc.Note{Id: 1, Author: "Max", Text: "Hello world", Title: "Add"}})
 	if err != nil {
 		log.Println(err)

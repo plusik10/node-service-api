@@ -8,6 +8,6 @@ import (
 )
 
 func (n *Note) Delete(ctx context.Context, request *desc.DeleteRequest) (*emptypb.Empty, error) {
-	fmt.Printf("Success! object  %s deleted", request.GetId())
+	fmt.Printf("Success! object  %d deleted", request.GetId())
 	return &emptypb.Empty{}, nil
 }

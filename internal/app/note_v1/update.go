@@ -3,15 +3,40 @@ package note_v1
 import (
 	"context"
 	"fmt"
+	"log"
+
+	"github.com/Masterminds/squirrel"
+	"github.com/jmoiron/sqlx"
 	desc "github.com/plusik10/note-service-api/pkg/note_v1"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (n *Note) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.Empty, error) {
-	fmt.Println("Note is update")
-	fmt.Println(req.Note.GetId())
-	fmt.Println(req.Note.GetTitle())
-	fmt.Println(req.Note.GetAuthor())
-	fmt.Println(req.Note.GetText())
+	dbDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		host, port, dbUser, dbPassword, dbName, sslMode)
+	db, err := sqlx.Open("pgx", dbDsn)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query, arg, err := squirrel.Update(noteTable).
+		PlaceholderFormat(squirrel.Dollar).
+		Set(colAuthor, req.Note.GetAuthor()).
+		Set(colTitle, req.Note.GetTitle()).
+		Set(colText, req.Note.GetText()).
+		Set(colUpdated_at, "now()").
+		Where(squirrel.Eq{"id": req.Note.Id}).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = db.ExecContext(ctx, query, arg...)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("note with id = %d was updated", req.Note.GetId())
 	return &emptypb.Empty{}, nil
 }

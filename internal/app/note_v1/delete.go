@@ -12,10 +12,8 @@ import (
 )
 
 func (n *Note) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
-
 	dbDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host, port, dbUser, dbPassword, dbName, sslMode)
-
 	db, err := sqlx.Open("pgx", dbDsn)
 	if err != nil {
 		return nil, err
@@ -29,7 +27,7 @@ func (n *Note) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Em
 		return nil, err
 	}
 
-	_, err = db.QueryContext(ctx, query, arg...)
+	_, err = db.ExecContext(ctx, query, arg...)
 	if err != nil {
 		return nil, err
 	}

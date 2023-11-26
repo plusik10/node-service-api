@@ -3,6 +3,7 @@ package note_v1
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 
@@ -14,24 +15,26 @@ import (
 func (n *Note) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse, error) {
 	dbDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host, port, dbUser, dbPassword, dbName, sslMode)
-
 	db, err := sqlx.Open("pgx", dbDsn)
 	if err != nil {
+		fmt.Println("get - sqlx.Open")
 		return nil, err
 	}
+	defer db.Close()
 
 	query, args, err := squirrel.Select("author,text,title").
 		From(noteTable).
 		Where(squirrel.Eq{"id": req.GetId()}).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
-
 	if err != nil {
+		fmt.Println("Get - query")
 		return nil, err
 	}
 
 	row, err := db.QueryContext(ctx, query, args...)
 	if err != nil {
+		fmt.Println("get - row - error")
 		return nil, err
 	}
 	defer row.Close()
@@ -41,17 +44,17 @@ func (n *Note) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse
 	var title string
 
 	row.Next()
-	fmt.Println(row)
 	err = row.Scan(&author, &text, &title)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
+			fmt.Println(" get scan no rows(")
+
 			return nil, fmt.Errorf("Record with id %s doest not exist", req.Id)
 		}
+		fmt.Println("get scan eror", err)
 		return nil, err
-
 	}
 
 	log.Println("a request to retrieve a note has been completed")
 	return &desc.GetResponse{Title: title, Author: author, Text: text}, nil
-
 }

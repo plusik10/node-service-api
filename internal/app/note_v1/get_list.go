@@ -19,12 +19,12 @@ func (n *Note) GetList(ctx context.Context, empty *emptypb.Empty) (*desc.GetList
 	if err != nil {
 		return nil, err
 	}
+	defer db.Close()
 
-	query, args, err := squirrel.Select("author,text,title").
+	query, args, err := squirrel.Select(colAuthor, colText, colAuthor).
 		From(noteTable).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -33,21 +33,19 @@ func (n *Note) GetList(ctx context.Context, empty *emptypb.Empty) (*desc.GetList
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var author string
 	var text string
 	var title string
 
-	notes := make([]*desc.Note, 0)
-
+	notes := []*desc.Note{}
 	for rows.Next() {
 		err := rows.Scan(&author, &text, &title)
 		if err != nil {
 			return nil, err
 		}
-
 		note := &desc.Note{Author: author, Title: title, Text: text}
-
 		notes = append(notes, note)
 	}
 

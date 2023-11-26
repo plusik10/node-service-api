@@ -14,25 +14,25 @@ import (
 func (n *Note) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.Empty, error) {
 	dbDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		host, port, dbUser, dbPassword, dbName, sslMode)
-
 	db, err := sqlx.Open("pgx", dbDsn)
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
+
 	query, arg, err := squirrel.Update(noteTable).
 		PlaceholderFormat(squirrel.Dollar).
-		Set("author", req.Note.Author).
-		Set("title", req.Note.Title).
-		Set("text", req.Note.GetText()).
-		Set("updated_at", "now()").
+		Set(colAuthor, req.Note.GetAuthor()).
+		Set(colTitle, req.Note.GetTitle()).
+		Set(colText, req.Note.GetText()).
+		Set(colUpdated_at, "now()").
 		Where(squirrel.Eq{"id": req.Note.Id}).
 		ToSql()
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = db.QueryContext(ctx, query, arg...)
+	_, err = db.ExecContext(ctx, query, arg...)
 	if err != nil {
 		return nil, err
 	}

@@ -17,7 +17,6 @@ func (n *Note) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse
 		host, port, dbUser, dbPassword, dbName, sslMode)
 	db, err := sqlx.Open("pgx", dbDsn)
 	if err != nil {
-		fmt.Println("get - sqlx.Open")
 		return nil, err
 	}
 	defer db.Close()
@@ -28,13 +27,11 @@ func (n *Note) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
 	if err != nil {
-		fmt.Println("Get - query")
 		return nil, err
 	}
 
 	row, err := db.QueryContext(ctx, query, args...)
 	if err != nil {
-		fmt.Println("get - row - error")
 		return nil, err
 	}
 	defer row.Close()
@@ -47,11 +44,8 @@ func (n *Note) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse
 	err = row.Scan(&author, &text, &title)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			fmt.Println(" get scan no rows(")
-
 			return nil, fmt.Errorf("Record with id %s doest not exist", req.Id)
 		}
-		fmt.Println("get scan eror", err)
 		return nil, err
 	}
 

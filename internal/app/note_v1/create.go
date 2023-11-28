@@ -2,46 +2,17 @@ package note_v1
 
 import (
 	"context"
-	"fmt"
-	"log"
 
-	"github.com/Masterminds/squirrel"
 	_ "github.com/jackc/pgx/stdlib"
-	"github.com/jmoiron/sqlx"
 	desc "github.com/plusik10/note-service-api/pkg/note_v1"
 )
 
 func (n *Note) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	dbDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		host, port, dbUser, dbPassword, dbName, sslMode)
-	db, err := sqlx.Open("pgx", dbDsn)
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-
-	query, arg, err := squirrel.Insert(noteTable).
-		PlaceholderFormat(squirrel.Dollar).
-		Columns(colAuthor, colTitle, colText).
-		Values(req.GetAuthor(), req.GetTitle(), req.GetText()).
-		Suffix("returning id").ToSql()
+	id, err := n.service.Create(ctx, req.GetTitle(), req.GetAuthor(), req.GetText())
 	if err != nil {
 		return nil, err
 	}
 
-	row, err := db.QueryContext(ctx, query, arg...)
-	if err != nil {
-		return nil, err
-	}
-	defer row.Close()
-	var id int64
-	row.Next()
-	err = row.Scan(&id)
-	if err != nil {
-		return nil, err
-	}
-
-	log.Printf("add new note id: %d\n", id)
 	return &desc.CreateResponse{
 		Id: id,
 	}, nil

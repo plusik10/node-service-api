@@ -8,7 +8,7 @@ import (
 )
 
 func (n *Note) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.Empty, error) {
-	err := n.service.Update(
+	err := n.noteService.Update(
 		ctx,
 		req.GetId(),
 		req.GetTitle(),

@@ -63,7 +63,7 @@ PHONY: .vendor-proto
 
 .PHONY: server-run
 server-run:
-	PG_URL='postgresql://postgres:qwerty@localhost:54321/note-service' go run cmd/server/main.go
+	CONFIG_PATH="config/config.go" PG_DSN='postgresql://postgres:qwerty@localhost:54321/note-service' go run cmd/server/main.go
 
 .PHONY: client-run
 client-run:

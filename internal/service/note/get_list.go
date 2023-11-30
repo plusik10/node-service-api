@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	desc "github.com/plusik10/note-service-api/pkg/note_v1"
+	"github.com/plusik10/note-service-api/internal/model"
 )
 
-func (s *Service) GetAll(ctx context.Context) ([]*desc.Note, error) {
-	notes, err := s.rep.GetAll(ctx)
+func (s *service) GetAll(ctx context.Context) ([]model.Note, error) {
+	notes, err := s.repo.GetAll(ctx)
 	if err != nil {
 		fmt.Printf("note.Service - GetALL - Repository: %s", err.Error())
 		return nil, err

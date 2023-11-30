@@ -3,13 +3,13 @@ package note
 import (
 	"context"
 
-	desc "github.com/plusik10/note-service-api/pkg/note_v1"
+	"github.com/plusik10/note-service-api/internal/model"
 )
 
-func (s *Service) Get(ctx context.Context, id int64) (desc.Note, error) {
-	note, err := s.rep.Get(ctx, id)
+func (s *service) Get(ctx context.Context, id int64) (model.Note, error) {
+	note, err := s.repo.Get(ctx, id)
 	if err != nil {
-		return desc.Note{}, err
+		return model.Note{}, err
 	}
 
 	return note, nil

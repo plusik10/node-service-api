@@ -1,9 +1,9 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
-import "vendor.protogen/google/api/annotations.proto";
+import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
-import "vendor.protogen/validate/validate.proto";
+import "validate/validate.proto";
 
 package api.note_v1;
 
@@ -12,62 +12,65 @@ option go_package = "github.com/plusik10/note-service-api/pkg/note_v1";
 service NoteV1 {
   rpc Create (CreateRequest) returns (CreateResponse){
     option (google.api.http) = {
-      post: "/note/v1/create"
+      post: "/v1/note"
       body: "*"
     };
   }
+
   rpc Get (GetRequest) returns (GetResponse){
     option (google.api.http) = {
-      get: "/note/v1/get"
+      get: "/v1/note"
     };
   }
+
   rpc GetList (google.protobuf.Empty) returns (GetListResponse){
     option (google.api.http) = {
-      get: "/note/v1/all"
+      get: "/v1/notes"
     };
   }
+
   rpc Update (UpdateRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
-      put: "/note/v1/upd"
+      patch: "/v1/note"
       body: "*"
     };
   }
+
   rpc Delete (DeleteRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
-      delete: "/note/v1/delete"
+      delete: "/v1/note"
     };
   }
 }
 
 message Note{
   int64 id = 1 [(validate.rules).int64.gt = 0];
-  string title = 2[(validate.rules).string.min_len=3];
-  string text = 3[(validate.rules).string.max_bytes=1024];
-  string author = 4[(validate.rules).string.min_len=3];
+  string title = 2 [(validate.rules).string.max_len = 100];
+  string text = 3 [(validate.rules).string.max_bytes = 1024];
+  string author = 4 [(validate.rules).string.min_len = 2];
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
 }
 
-
 message UpdateRequest{
-  int64 id =1[(validate.rules).int64.gt = 0];
-  string title =2[(validate.rules).string.min_len=3];
-  string text = 3[(validate.rules).string.min_len=3];
-  string author=4[(validate.rules).string.min_len=3];
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+  string title = 2 [(validate.rules).string.min_len = 3];
+  string text = 3 [(validate.rules).string.max_len = 1024];
+  string author = 4 [(validate.rules).string.min_len = 3];
 }
 
 message CreateRequest{
-  string title = 1 [(validate.rules).string.min_len=3];
-  string text = 2 [(validate.rules).string.max_bytes=1024];
-  string author = 3 [(validate.rules).string.min_len=3];
+  string title = 1 [(validate.rules).string.min_len = 3];
+  string text = 2 [(validate.rules).string.max_bytes = 1024];
+  string author = 3 [(validate.rules).string.min_len = 3];
 }
 
 message CreateResponse{
-  int64 id = 1[(validate.rules).int64.gt = 0];
+  int64 id = 1 [(validate.rules).int64.gt = 0];
 }
 
 message GetRequest{
-  int64 id = 1[(validate.rules).int64.gt = 0];
+  int64 id = 1 [(validate.rules).int64.gt = 0];
 }
 
 message GetResponse{
@@ -79,5 +82,5 @@ message GetListResponse{
 }
 
 message DeleteRequest{
-  int64 id = 1[(validate.rules).int64.gt = 0];
+  int64 id = 1 [(validate.rules).int64.gt = 0];
 }

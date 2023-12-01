@@ -67,7 +67,7 @@ func startHTTP(cfg *config.Config) error {
 func startGRPC(grpcPort string, server desc.NoteV1Server) error {
 	list, err := net.Listen("tcp", ":50052")
 	if err != nil {
-		log.Fatalf("failed to mapping port: %s", err.Error())
+		return err
 	}
 
 	s := grpc.NewServer(grpc.UnaryInterceptor(grpcValidator.UnaryServerInterceptor()))
@@ -75,7 +75,6 @@ func startGRPC(grpcPort string, server desc.NoteV1Server) error {
 	fmt.Printf("GRPCServer is running on : %s\n", grpcPort)
 
 	if err = s.Serve(list); err != nil {
-		fmt.Println(err)
 		return err
 	}
 

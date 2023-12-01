@@ -68,8 +68,8 @@ func (p *PostgresRepository) GetAll(ctx context.Context) ([]model.Note, error) {
 
 	for rows.Next() {
 		note := model.Note{}
-		errScan := rows.Scan(&note.Id, &note.Author, &note.Title, &note.Text, &note.UpdateAt, &note.CreateAt)
-		if errScan != nil {
+		err = rows.Scan(&note.Id, &note.Author, &note.Title, &note.Text, &note.UpdateAt, &note.CreateAt)
+		if err != nil {
 			return nil, err
 		}
 		notes = append(notes, note)

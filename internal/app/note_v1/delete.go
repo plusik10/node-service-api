@@ -10,7 +10,7 @@ import (
 func (n *Note) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
 	err := n.noteService.Delete(ctx, req.GetId())
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return nil, err
 	}
 
 	return &emptypb.Empty{}, err

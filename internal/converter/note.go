@@ -7,7 +7,7 @@ import (
 )
 
 func ToDescFromNotes(notes []model.Note) []*desc.Note {
-	resultNotes := make([]*desc.Note, 0, len(notes))
+	res := make([]*desc.Note, 0, len(notes))
 	var (
 		updatedAt *timestamppb.Timestamp
 		createdAt *timestamppb.Timestamp
@@ -17,7 +17,7 @@ func ToDescFromNotes(notes []model.Note) []*desc.Note {
 		if n.UpdateAt != nil {
 			updatedAt = timestamppb.New(*n.UpdateAt)
 		}
-		resultNotes = append(resultNotes, &desc.Note{Id: n.Id,
+		res = append(res, &desc.Note{Id: n.Id,
 			Title:     n.Title,
 			Author:    n.Author,
 			Text:      n.Text,
@@ -26,18 +26,16 @@ func ToDescFromNotes(notes []model.Note) []*desc.Note {
 		})
 	}
 
-	return resultNotes
+	return res
 }
 
 func ToDescFromNote(note model.Note) *desc.Note {
 	var (
 		updatedAt *timestamppb.Timestamp
-		createdAt *timestamppb.Timestamp
 	)
 	if note.UpdateAt != nil {
 		updatedAt = timestamppb.New(*note.UpdateAt)
 	}
-	createdAt = timestamppb.New(note.CreateAt)
 
 	return &desc.Note{
 		Id:        note.Id,
@@ -45,6 +43,6 @@ func ToDescFromNote(note model.Note) *desc.Note {
 		Text:      note.Text,
 		Author:    note.Author,
 		UpdatedAt: updatedAt,
-		CreatedAt: createdAt,
+		CreatedAt: timestamppb.New(note.CreateAt),
 	}
 }
